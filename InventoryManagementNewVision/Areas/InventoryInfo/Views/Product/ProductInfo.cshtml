@@ -1,0 +1,240 @@
+﻿@{
+	ViewData["Title"] = "Product Info";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Style {
+};
+
+<div class="container mt-4">
+	<div class="card p-3">
+		<input type="hidden" id="productId" value="0" />
+		<div class="form-group">
+			<label>Name</label>
+			<input id="productName" class="form-control" />
+		</div>
+		<div class="form-group">
+			<label>Category</label>
+			<select id="categoryId" class="form-control">
+				<option value="">-- Select Category --</option>
+			</select>
+		</div>
+		<div class="form-group">
+			<label>Price</label>
+			<input id="price" class="form-control" type="number" />
+		</div>
+		<div class="form-group">
+			<label>Stock Quantity</label>
+			<input id="stockQuantity" class="form-control" type="text" maxlength="10" />
+		</div>
+		<button onclick="saveProduct()" class="btn btn-primary mt-2">Save</button>
+	</div>
+
+	<div class="card">
+		<div class="card-body">
+			<table id="productTable" class="display table table-bordered">
+				<thead>
+					<tr>
+						<th>Category</th>
+						<th>Name</th>
+						<th>Price</th>
+						<th>Stock Quantity</th>
+						<th>Last Updated</th>
+						<th>Actions</th>
+					</tr>
+				</thead>
+				<tbody id="productList">
+					<!-- Rows will be injected here -->
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+
+</div>
+@section Scripts {
+
+	<script>
+		$(document).ready(function () {
+			loadCategories();
+		loadProducts();
+		});
+
+			function loadCategories() {
+			$.ajax({
+				url: '/InventoryInfo/Product/GetCatagories',  // Change to your real route
+				type: 'GET',
+				success: function (data) {
+					let options = '<option value="">-- Select Category --</option>';
+					data.forEach(c => {
+						options += `<option value="${c.Id}">${c.Name}</option>`;
+					});
+					$('#categoryId').html(options);
+				},
+				error: function () {
+					alert('Failed to load categories');
+				}
+			});
+		}
+
+			  function loadProducts() {
+				  var color='';
+			$.get("/InventoryInfo/Product/GetAll", function (data) {
+				console.log(data);
+
+				// Destroy DataTable if it exists
+				if ($.fn.DataTable.isDataTable('#productTable')) {
+					$('#productTable').DataTable().clear().destroy();
+				}
+
+
+				let rows = "";
+				data.forEach(p => {
+					if(p.StockQuantity < 5){
+						color='red'
+					}
+					rows += `<tr>
+						<td>${p.catagory?.Name || ''}</td>
+						<td>${p.Name}</td>
+						<td>${p.Price}</td>
+						<td style="color:${color}">${p.StockQuantity}</td>
+						<td>${formatDate(p.LastUpdated)}</td>
+						<td>
+							<button class="btn btn-sm btn-info" onclick="editProduct(${p.Id})">Edit</button>
+							<button class="btn btn-sm btn-danger" onclick="deleteProduct(${p.Id})">Delete</button>
+						</td>
+					</tr>`;
+				});
+
+				// Inject rows into table body
+				$("#productList").html(rows);
+
+				// Reinitialize DataTable
+				$('#productTable').DataTable({
+					paging: true,
+					searching: true,
+					ordering: true,
+					info: true,
+					lengthChange: true,
+					pageLength: 10,
+				});
+			});
+		}
+
+		function saveProduct() {
+		var productName = $("#productName").val().trim();
+		var categoryId = parseInt($("#categoryId option:selected").val());
+		var price = parseFloat($("#price").val());
+		var stockQuantity = parseInt($("#stockQuantity").val());
+
+		if (!productName || isNaN(categoryId) || isNaN(price) || isNaN(stockQuantity)) {
+			swal("Warning!", "Please fill all the fields correctly.", "warning");
+			return false;
+		}
+			const product = {
+				Id: parseInt($("#productId").val()),
+				Name: productName,
+				catagoryId: categoryId,
+				Price: price,
+				StockQuantity: stockQuantity
+			};
+			   $.blockUI({
+				message: '<h4>Saving Data....!</h4>',
+				css: {
+					border: 'none',
+					padding: '15px',
+					backgroundColor: '#000',
+					'-webkit-border-radius': '10px',
+					'-moz-border-radius': '10px',
+					opacity: 0.7,
+					color: '#fff'
+				}
+			});
+			$.ajax({
+				url: "/InventoryInfo/Product/Save",
+				method: "POST",
+				contentType: "application/json",
+				data: JSON.stringify(product),
+				success: function () {
+					$.unblockUI();
+					clearForm();
+					loadProducts();
+					swal("Saved!", "Product saved successfully.", "success");
+				}
+			});
+		}
+
+		function editProduct(id) {
+			$.get("/InventoryInfo/Product/GetById/" + id, function (p) {
+				$("#productId").val(p.Id);
+				$("#productName").val(p.Name);
+				$("#categoryId").val(p.catagoryId).trigger('change');
+				$("#price").val(p.Price);
+				$("#stockQuantity").val(p.StockQuantity);
+			});
+		}
+
+		  function deleteProduct(id) {
+			swal({
+				title: 'Are you sure?',
+				text: "This product will be deleted permanently.",
+				icon: 'warning',
+				showCancelButton: true,
+				confirmButtonText: 'Yes, delete it!',
+				cancelButtonText: 'Cancel',
+				reverseButtons: true
+			}).then((result) => {
+						
+				if (result) 
+				{
+					$.blockUI({
+						message: '<h4>Delating Data....!</h4>',
+						css: {
+							border: 'none',
+							padding: '15px',
+							backgroundColor: '#000',
+							'-webkit-border-radius': '10px',
+							'-moz-border-radius': '10px',
+							opacity: 0.7,
+							color: '#fff'
+						}
+						});
+					$.ajax({
+						url: "/InventoryInfo/Product/Delete/" + id,
+						method: "DELETE",
+						success: function () {
+							$.unblockUI();
+							swal('Deleted!', 'Product has been deleted.', 'success');
+							loadProducts();
+						},
+						error: function () {
+							$.unblockUI();
+							swal('Error', 'An error occurred while deleting.', 'error');
+						}
+					});
+				}
+			});
+		}
+
+		function clearForm() {
+			$("#productId").val(0);
+			$("#productName, #categoryId, #price, #stockQuantity").val('');
+		}
+
+			$('#stockQuantity').on('input', function() {
+			this.value = this.value.replace(/[^0-9]/g, '');
+		});
+
+			function formatDate(dateStr) {
+			if (!dateStr) return ""; 
+
+			const d = new Date(dateStr);
+			if (isNaN(d)) return "";
+
+			const year = d.getFullYear();
+			const month = String(d.getMonth() + 1).padStart(2, '0');
+			const day = String(d.getDate()).padStart(2, '0');
+
+			return `${year}-${month}-${day}`;
+		}
+	</script>
+}

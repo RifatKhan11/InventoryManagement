@@ -1,0 +1,302 @@
+﻿
+<!DOCTYPE html>
+<html translate="no">
+<head>
+    <meta name="google" content="nottranslate">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Inventory Management</title>
+
+
+    <link href="~/CustomSelectOption/select2.min.css" rel="stylesheet" />
+
+    <link href="~/SweetAlert/sweetalert2.css" rel="stylesheet" />
+    <!-- Custom fonts for this template-->
+    <!-- Custom Date Picker-->
+    <link href="https://unpkg.com/gijgo@1.9.11/css/gijgo.min.css" rel="stylesheet" type="text/css" />
+
+    <!-- Custom styles for this page -->
+    <link href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <link href="~/css/sb-admin-2.min.css" rel="stylesheet">
+
+    @*loading bar*@
+    <link href="~/loading-bar/dist/loading-bar.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+
+    <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'" rel="preload">
+
+
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="~/fonts/solaimanLipi.css" rel="stylesheet" />
+    <link href="~/lib/jquery/jquery.blockUI.css" rel="stylesheet" />
+
+    <style>
+        @@import url(https://fonts.googleapis.com/css?family=Open+Sans:400,300);
+
+        body {
+            font-family: "Open Sans", "SolaimanLipiNormal", Arial, sans-serif !important;
+            font-size: 11pt !important;
+            margin: 0;
+        }
+
+        .navbar-fixed-top {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1030;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar-fixed-left {
+            position: fixed;
+            top: 70px;
+            left: 0;
+            width: 250px;
+            height: 100%;
+            overflow-y: auto;
+            z-index: 1020;
+            background-color: cornflowerblue;
+            color: white;
+        }
+
+            .sidebar-fixed-left .nav-link {
+                color: black;
+                font-size: 16px;
+                padding: 12px 20px;
+                text-decoration: none;
+            }
+
+                .sidebar-fixed-left .nav-link:hover {
+                    background-color: lightblue;
+                    color: white;
+                    border-radius: 4px;
+                }
+
+        #content-wrapper {
+            margin-left: 270px;
+            padding: 85px 15px 15px;
+            background-color: #f8f9fa;
+            min-height: 100vh;
+        }
+
+        /* Media queries for smaller screens */
+        @@media (max-width: 991px) {
+            .sidebar-fixed-left {
+                width: 200px;
+                height: auto;
+                position: relative;
+            }
+
+            #content-wrapper {
+                margin-left: 15px;
+            }
+        }
+
+        @@media (max-width: 767px) {
+            .sidebar-fixed-left {
+                width: 100%;
+                height: auto;
+                position: relative;
+                top: 0;
+                overflow-x: hidden;
+            }
+
+            #content-wrapper {
+                margin-left: 10px;
+                padding-top: 70px;
+            }
+        }
+
+    </style>
+
+
+    @RenderSection("Style", required: false)
+</head>
+
+
+
+
+
+
+<body>
+    <nav class="navbar navbar-expand topbar static-top shadow navbar-fixed-top" style="background-color: floralwhite;">
+        <div class="col-12 col-md-12 row">
+            <div class="col-4 col-md-4 pt-2">
+                <h2>Inventory Management System</h2>
+            </div>
+
+            <div class="col-4 col-md-4">
+            </div>
+
+            <div class="col-4  col-md-4 row">
+                <ul class="navbar-nav ml-auto">
+
+                    <li class="nav-item dropdown no-arrow">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <div style="margin-top:20px">
+                                <span class="mr-2 d-none d-lg-inline text-white-600 small" style="font-size:16px;">Hello</span><br />
+                                <span class="mr-2 d-none d-lg-inline text-white-600 small" style="font-size:16px;">Welcome</span>
+                            </div>
+
+                            <img src="~/images/manimage.png" class="img-profile rounded-circle" height="32" width="32" style="height:40px;width:40px; margin-top:20px" />
+
+
+                        </a>
+
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+
+    </nav>
+
+    <div id="page-top">
+        <!-- Page Wrapper -->
+        <div id="wrapper">
+            <!-- Sidebar -->
+            <div id="menuBar" class="sidebar-fixed-left">
+
+                <div id="menu">
+                    <ul class="navbar-nav sidebar sidebar-dark accordion" style="background-color: cornflowerblue; color:white;" id="accordionSidebar">
+
+
+                        <li class="nav-item">
+                            <a class="nav-link" id="HomeIcon" href="/Home/Home/Index">
+                                <i class="fas fa-fw fa-home" style="color:black;font-size:24px"></i>
+                                <span style="color:black;font-size:20px" id="dashboard">Home</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item" id="accordionSidebar_MasterData">
+
+                            <a class="nav-link collapsed apadding" href="javascript:void(0)" data-toggle="collapse" data-target="#collapse_MasterData" aria-expanded="true" aria-controls="collapse_MasterData">
+
+                                <span class="btn" style="color:black;font-size:18px" id="Setting_MasterData">Master Data</span>
+                            </a>
+                            <div id="collapse_MasterData" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+
+                                <a class="nav-link" href="/InventoryInfo/Product/ProductCategory">
+                                    <span class="c" style="color:black;">Product Category</span>
+                                </a>
+
+                            </div>
+                        </li>                      
+                        <li class="nav-item" id="accordionSidebar_Per">
+
+                            <a class="nav-link collapsed apadding" href="javascript:void(0)" data-toggle="collapse" data-target="#collapse_Per" aria-expanded="true" aria-controls="collapse_Per">
+                                <span class="btn" style="color:black;font-size:18px" id="Setting_Per">Product</span>
+                            </a>
+                            <div id="collapse_Per" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+
+                                <a class="nav-link" href="/InventoryInfo/Product/ProductInfo">
+                                    <span class="c" style="color:black;">Add Product</span>
+                                </a>
+                                <a class="nav-link" href="/InventoryInfo/Product/GetProductSummery">
+                                    <span class="c" style="color:black;">Review Report</span>
+                                </a>
+                            </div>
+                        </li>
+
+                    </ul>
+                </div>
+
+
+            </div>
+
+
+            <div id="content-wrapper" class="d-flex flex-column">
+                <div id="content">
+                    <div>
+                        @RenderBody()
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="~/vendor/jquery/jquery.min.js"></script>
+    <script src="~/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Page level plugins -->
+    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <!-- Page level custom scripts -->
+    <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.5.6/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+
+
+    @*dropdown with search*@
+
+    @*<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>*@
+    <script src="~/CustomSelectOption/select2.min.js"></script>
+
+    @*loading bar*@
+    <script src="~/loading-bar/dist/loading-bar.js"></script>
+
+    <!-- Custom Date Picker-->
+    <script src="https://unpkg.com/gijgo@1.9.11/js/gijgo.min.js" type="text/javascript"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="~/vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="~/SweetAlert/sweetalert2.common.js"></script>
+    <script src="~/SweetAlert/sweetalert2.js"></script>
+    <script src="~/js/jquery.autocomplete.js" type="text/javascript"></script>
+
+    <!-- parsly Validation -->
+    <script src="~/js/parsly.js"></script>
+
+    <!-- Comon Ajax Lib -->
+    <script type="text/javascript" src="~/js/common.js"></script>
+    <script type="text/javascript" src="~/js/jquery.number.js"></script>
+    <script type="text/javascript" src="~/js/jquery.number.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="~/js/datatabledate.js" type="text/javascript"></script>
+    <!-- Custom scripts for all pages-->
+    <script src="~/lib/jquery/jquery.blockUI.js"></script>
+
+    <script type="text/javascript">
+
+        function ClearLocalStorage() {
+            window.localStorage.clear();
+        }
+
+    </script>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js" type="text/javascript"></script>
+    <script src="https://code.jquery.com/jquery-migrate-3.0.0.min.js" type="text/javascript"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
+
+
+
+    @RenderSection("Scripts", required: false)
+
+</body>
+</html>

@@ -1,0 +1,60 @@
+﻿@model ProductInfoModel
+@{
+    ViewData["Title"] = "Product Info Summery Report";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">    
+
+    <div class="card">
+        <div class="card-body">
+            <table id="productTable" class="display table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Category</th>
+                        <th>Name</th>
+                        <th>Price</th>
+                        <th>Stock Quantity</th>
+                        <th>Last Updated</th>
+                    </tr>
+                </thead>
+                <tbody id="productList">
+                    @foreach (var data in Model.sPProductInfoModels)
+                    {
+                        <tr>
+                            <td>@data.categoryName</td>
+                            <td>@data.productName</td>
+                            <td>@data.StockQuantity</td>
+                            <td>@data.totalPrice</td>
+                            <td>@data.LastUpdated?.ToString("dd-MMM-yyyy hh:mm")</td>
+                           
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+</div>
+@section Scripts {
+
+<script>
+	$(document).ready(function () {
+		$('#productTable').DataTable({
+			"order": [[4, "desc"]],
+			"pageLength": 10,
+			"lengthMenu": [5, 10, 25, 50, 100],
+			"language": {
+				"lengthMenu": "_MENU_",
+				"zeroRecords": "No records found",
+				"info": "_PAGE_ of _PAGES_",
+				"infoEmpty": "No records available",
+				"infoFiltered": "(filtered from _MAX_ total records)",
+				"search": "_INPUT_",
+				"searchPlaceholder": "Search"
+			}
+		});
+	});
+</script>
+}
